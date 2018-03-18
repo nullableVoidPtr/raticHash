@@ -36,7 +36,7 @@ Figure 1: Comparison of 2 methods.
 
 # Updating
 
-To increase entropy, a custom PRNG is utilized. With its state stored in `ratic_context`, this PRNG is constantly seeded by the input plaintext (on the first iteration) and then the carryover (from the previous iteration). If a different byte is used for the seed, then the output would be different, creating an avalanche effect:
+To increase entropy, a custom PRNG is utilized. With its state stored in `ratic_context`, this PRNG is constantly seeded by the input plaintext (on the first iteration) and then the carryover (from the previous iteration), both of which are XORed with the output length. If a different byte is used for the seed, then the output would be different, creating an avalanche effect:
 
 ```
 PRNG = ~(PRNG ^ seed) % 256
