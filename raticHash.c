@@ -4,7 +4,6 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
-#include <limits.h>
 
 ratic_context* ratic_init(unsigned int length, unsigned int difficulty) {
 	ratic_context* result;
@@ -25,12 +24,13 @@ void ratic_update(ratic_context* ctx, const char* data, int length) {
 		carryover = data[i];
 		for (unsigned int j = 0; j < ctx->difficulty; j++) {
 			for (unsigned int k = 0; k < ctx->hash_len; k++) {
-				ctx->PRNG = ~(ctx->PRNG ^ carryover ^ ctx->hash_len) % UCHAR_MAX + 1;
+				ctx->PRNG = ~(ctx->PRNG ^ ctx->hash_len) - carryover;
 				ctx->state[k] ^= ctx->PRNG;
 				carryover = ctx->prev_state[k];
 				ctx->prev_state[k] = ctx->PRNG;
 			}
 		}
+		ctx->message_len++;
 	}
 }
 
@@ -41,7 +41,7 @@ void ratic_final(char* result, ratic_context* ctx) {
 
 	pad_len = ctx->hash_len - (ctx->message_len % ctx->hash_len);
 	pad_len += (pad_len < ctx->hash_len) ? ctx->hash_len : 0; 
-	counter = ctx->message_len % UCHAR_MAX + 1;
+	counter = ctx->message_len;
 	padding = (char*) calloc(pad_len, sizeof(char));
 	
 	for (int i = 0; i < pad_len; i++) {

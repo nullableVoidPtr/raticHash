@@ -1,5 +1,8 @@
 #include "raticHash.h"
 
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
 #include <math.h>
 
 void print_ratic(const char* string, unsigned int hash_len) {
@@ -20,8 +23,8 @@ void zero_ratic(unsigned int hash_len, unsigned int message_len) {
 	unsigned char* result;
 	unsigned char* input;
 
-	result = (char*) calloc(hash_len, sizeof(char));
-	input = (char*) calloc(message_len, sizeof(char));
+	result = (unsigned char*) calloc(hash_len, sizeof(char));
+	input = (unsigned char*) calloc(message_len, sizeof(char));
 	context = ratic_init(hash_len, 1);
 	ratic_update(context, input, message_len);
 	ratic_final(result, context);
@@ -35,8 +38,8 @@ void partial_update(unsigned int hash_len, unsigned int message_len) {
 	unsigned char* result;
 	unsigned char* input;
 
-	result = (char*) calloc(hash_len, sizeof(char));
-	input = (char*) calloc(message_len, sizeof(char));
+	result = (unsigned char*) calloc(hash_len, sizeof(char));
+	input = (unsigned char*) calloc(message_len, sizeof(char));
 	memset(input, 'a', message_len);
 	context = ratic_init(hash_len, 1024);
 	ratic_update(context, input, message_len);

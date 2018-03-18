@@ -2,9 +2,9 @@ typedef struct _ratic_context {
 	unsigned int hash_len;
 	unsigned int message_len;
 	unsigned int difficulty;
-	unsigned char PRNG;
-	unsigned char* state;
-	unsigned char* prev_state;
+	char PRNG;
+	char* state;
+	char* prev_state;
 } ratic_context;
 
 ratic_context* ratic_init(unsigned int, unsigned int);
