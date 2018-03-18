@@ -6,11 +6,12 @@
 #include <string.h>
 #include <limits.h>
 
-ratic_context* ratic_init(int length) {
+ratic_context* ratic_init(unsigned int length, unsigned int difficulty) {
 	ratic_context* result;
 	
 	result = (ratic_context*) calloc(1, sizeof(ratic_context));
 	result->hash_len = length;
+	result->difficulty = difficulty;
 	result->state = (char*) calloc(length, sizeof(char));
 	result->prev_state = (char*) calloc(length, sizeof(char));
 	
@@ -20,12 +21,15 @@ ratic_context* ratic_init(int length) {
 void ratic_update(ratic_context* ctx, const char* data, int length) {
 	unsigned char carryover;
 
-	for (unsigned int i = 0; i < length; carryover = data[i++]) {
-		for (unsigned int j = 0; j < ctx->hash_len; j++) {
-			ctx->PRNG = ~(ctx->PRNG ^ carryover ^ ctx->hash_len) % UCHAR_MAX + 1;
-			ctx->state[j] ^= ctx->PRNG;
-			carryover = ctx->prev_state[j];
-			ctx->prev_state[j] = ctx->PRNG;
+	for (unsigned int i = 0; i < length; i++) {
+		carryover = data[i];
+		for (unsigned int j = 0; j < ctx->difficulty; j++) {
+			for (unsigned int k = 0; k < ctx->hash_len; k++) {
+				ctx->PRNG = ~(ctx->PRNG ^ carryover ^ ctx->hash_len) % UCHAR_MAX + 1;
+				ctx->state[k] ^= ctx->PRNG;
+				carryover = ctx->prev_state[k];
+				ctx->prev_state[k] = ctx->PRNG;
+			}
 		}
 	}
 }

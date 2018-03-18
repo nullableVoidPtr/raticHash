@@ -18,34 +18,33 @@ Instead of creating a 2D matrix to preform calculations on, meaning the hash has
 
 ```
 total   matrix
-31      1 2 4 8 16
-15      1 2 4 8 R
-7       1 2 4 R R
-3       1 2 R R R
-1       1 R R R R
-Rs are unused elements in the matrix
+23      1 2 4 6 10
+10      1 2 3 4 0
+3       1 1 1 0 0
+0       0 0 0 0 0
+0       0 0 0 0 0
 
 state   prev_state
-31      16
-8       8
-7       4
-3       2
-1       1
+23      10
+10      4
+3       1
+0       0
+0       0
 ```
 Figure 1: Comparison of 2 methods.
 
 
 # Updating
 
-To increase entropy, a custom PRNG is utilized. With its state stored in `ratic_context`, this PRNG is constantly seeded by the carryover (initialized to the input byte of the data), XORed with the output length. If a different byte is used for the seed, then the output would be different, creating an avalanche effect:
+To increase entropy, a custom PRNG is utilized. With its state stored in `ratic_context`, this PRNG is constantly seeded by the input plaintext (on the first iteration) and then the carryover (from the previous iteration), both of which are XORed with the output length. If a different byte is used for the seed, then the output would be different, creating an avalanche effect:
 
 ```
 PRNG = ~(PRNG ^ seed) % 256
 ```
 
-The state is XORed with the output of the RNG, and the carryover is set to the previous state (the last column). The previous state is then set to the output of the RNG.
+The state is XORed with the output of the RNG, and the carryover is set to the previous state (the last column), which is then set to the output of the RNG.
 
-The preceding process is then iterated for each row of the state, for each byte of data.
+The preceding process is then iterated for each row of the state, repeated by the difficulty factor, for each byte of the state, as the central process described is 'cheap'.
 
 # Finalizing
 
