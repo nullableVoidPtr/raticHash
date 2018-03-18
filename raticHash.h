@@ -1,7 +1,7 @@
 typedef struct _ratic_context {
 	int hash_len;
 	int message_len;
-	unsigned char LCG;
+	unsigned char PRNG;
 	unsigned char* state;
 	unsigned char* prev_state;
 } ratic_context;
