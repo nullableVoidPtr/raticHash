@@ -6,7 +6,7 @@ Please do not use in production. Or anywhere.
 
 # Motivation
 
-I first started thinking about this project when I was learning about constructing a exponential function to fit a table of values in Maths. The triangle of differences you had to write to do this piqued my interest, and I thought, by adding the sum of each 'row' in this triangle, you could create a one-way function, with the 'y-values' being each character of the input. Substituting addition for XOR, and with the addition of a PRNG, I have managed to create a simple variable-length hash function (with unknown security).
+I first started thinking about this project when I was learning about constructing a exponential function to fit a table of values. The triangle of differences you had to write to do this piqued my interest, and I thought, by adding the sum of each 'row' in this triangle, you could create a one-way function, with the 'y-values' being each character of the input. Substituting addition for XOR, and with the addition of a PRNG, I have managed to create a simple variable-length hash function (with unknown security).
 
 ## Specification
 
@@ -14,7 +14,7 @@ Code in repository may or may not match up with the specifications below.
 
 # State
 
-Instead of creating a 2D matrix to preform calculations on, meaning the hash has a space complexity of O(n^2), raticHash uses 2 arrays, with a space complexity of O(2n); `state`, and `prev_state`. `state` being the 'total' for each row on the 'triangle', while `prev_state` stores the last column of the triangle, required for calculating the next element in `state`.
+Instead of creating a 2D matrix to preform calculations on, meaning the hash has a space complexity of O(n^2), raticHash uses 2 arrays, with a space complexity of O(2n); `vector`, and `prev_inputs`. `vector` being the 'total' for each row on the 'triangle', while `prev_inputs` stores the last column of the triangle, required for calculating the next element in `vector`.
 
 ```
 total   matrix
