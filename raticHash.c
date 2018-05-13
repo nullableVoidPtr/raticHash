@@ -5,16 +5,13 @@
 #include <stdint.h>
 #include <string.h>
 
-ratic_context* ratic_init(unsigned int length, unsigned int difficulty) {
-	ratic_context* result;
-	
-	result = calloc(1, sizeof(ratic_context));
-	result->hash_len = length;
-	result->difficulty = difficulty;
-	result->vector = calloc(length, sizeof(char));
-	result->prev_inputs = calloc(length, sizeof(char));
-	
-	return result;
+void ratic_init(ratic_context* ctx, unsigned int length, unsigned int difficulty) {
+	ctx->hash_len = length;
+	ctx->difficulty = difficulty;
+	ctx->state = 0;
+	ctx->message_len = 0;
+	ctx->vector = calloc(length, sizeof(char));
+	ctx->prev_inputs = calloc(length, sizeof(char));
 }
 
 void ratic_update(ratic_context* ctx, const unsigned char* data, unsigned int length) {
@@ -34,7 +31,7 @@ void ratic_update(ratic_context* ctx, const unsigned char* data, unsigned int le
 	}
 }
 
-void ratic_final(char* result, ratic_context* ctx) {
+void ratic_final(ratic_context* ctx, char* result)  {
 	unsigned char* padding;
 	unsigned int pad_len;
 	unsigned char counter;
@@ -60,5 +57,6 @@ void ratic_final(char* result, ratic_context* ctx) {
 	free(padding);
 	free(ctx->vector);
 	free(ctx->prev_inputs);
-	free(ctx);
-}
+	
+	memset(ctx, 0, sizeof(ratic_context));
+};

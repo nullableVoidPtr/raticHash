@@ -7,6 +7,6 @@ typedef struct _ratic_context {
 	char* prev_inputs;
 } ratic_context;
 
-ratic_context* ratic_init(unsigned int, unsigned int);
-void ratic_update(ratic_context*, const unsigned char*, int);
-void ratic_final(char*, ratic_context*);
+void ratic_init(ratic_context*, unsigned int, unsigned int);
+void ratic_update(ratic_context*, const unsigned char*, unsigned int);
+void ratic_final(ratic_context*, char*);
