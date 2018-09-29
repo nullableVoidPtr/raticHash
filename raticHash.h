@@ -1,3 +1,5 @@
+#pragma once
+
 typedef struct _ratic_context {
 	unsigned int hash_len;
 	unsigned int message_len;
