@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: MIT
+
 #include "raticHash.h"
 
 #include <stdlib.h>
@@ -37,10 +39,10 @@ void ratic_final(ratic_context* ctx, char* result)  {
 	unsigned char counter;
 
 	pad_len = ctx->hash_len - (ctx->message_len % ctx->hash_len);
-	pad_len += (pad_len < ctx->hash_len) ? ctx->hash_len : 0; 
+	pad_len += (pad_len < ctx->hash_len) ? ctx->hash_len : 0;
 	counter = ctx->message_len;
 	padding = calloc(pad_len, sizeof(char));
-	
+
 	for (int i = 0; i < pad_len; i++) {
 		if (i % 2) {
 			padding[i] = ~counter;
@@ -49,14 +51,14 @@ void ratic_final(ratic_context* ctx, char* result)  {
 			counter -= ctx->hash_len;
 		}
 	};
-	
+
 	ratic_update(ctx, padding, pad_len);
-	
+
 	memcpy(result, ctx->vector, ctx->hash_len);
 
 	free(padding);
 	free(ctx->vector);
 	free(ctx->prev_inputs);
-	
+
 	memset(ctx, 0, sizeof(ratic_context));
 };

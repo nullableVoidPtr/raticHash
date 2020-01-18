@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: MIT
+
 #include "raticHash.h"
 
 #include <stdlib.h>
@@ -8,13 +10,13 @@
 void print_ratic(const unsigned char* string, unsigned int hash_len) {
 	ratic_context context;
 	unsigned char* result;
-	
+
 	result = calloc(hash_len, sizeof(char));
-	
+
 	ratic_init(&context, hash_len, 1);
 	ratic_update(&context, string, strlen(string) + 1);
 	ratic_final(&context, result);
-	
+
 	for (int i = 0; i < hash_len; printf("%02x", result[i++]));
 	printf("\n");
 

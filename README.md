@@ -4,19 +4,26 @@ My first C project, a possibly weak custom primitive hash function, with a chanc
 
 Please do not use in production. Or anywhere.
 
-# Motivation
+## Motivation
 
-I first started thinking about this project when I was learning about constructing a exponential function to fit a table of values. The triangle of differences you had to write to do this piqued my interest, and I thought, by adding the sum of each 'row' in this triangle, you could create a one-way function, with the 'y-values' being each character of the input. Substituting addition for XOR, and with the addition of a PRNG, I have managed to create a simple variable-length hash function (with unknown security).
+I first started thinking about this project when I was learning about constructing a exponential function to fit a table
+of values. The triangle of differences you had to write to do this piqued my interest, and I thought, by adding the sum
+of each 'row' in this triangle, you could create a one-way function, with the 'y-values' being each character of the
+input. Substituting addition for XOR, and with the addition of a PRNG, I have managed to create a simple variable-length
+hash function (with unknown security).
 
-## Specification
+### Specification
 
 Code in repository may or may not match up with the specifications below.
 
-# State
+## State
 
-Instead of creating a 2D matrix to preform calculations on, meaning the hash has a space complexity of O(n^2), raticHash uses 2 arrays, with a space complexity of O(2n); `vector`, and `prev_inputs`. `vector` being the 'total' for each row on the 'triangle', while `prev_inputs` stores the last column of the triangle, required for calculating the next element in `vector`.
+Instead of creating a 2D matrix to preform calculations on, meaning the hash has a space complexity of O(n^2), raticHash
+uses 2 arrays, with a space complexity of O(2n); `vector`, and `prev_inputs`. `vector` being the 'total' for each row on
+the 'triangle', while `prev_inputs` stores the last column of the triangle, required for calculating the next element in
+`vector`.
 
-```
+```txt
 total   matrix
 23      1 2 4 6 10
 10      1 2 3 4 0
@@ -31,25 +38,31 @@ state   prev_state
 0       0
 0       0
 ```
+
 Figure 1: Comparison of 2 methods.
 
+## Updating
 
-# Updating
+To increase entropy, a custom PRNG is utilized. With its state stored in `ratic_context`, this PRNG is constantly seeded
+by the carryover (initialized to the input byte). If one different byte is used for the seed, then the output would be
+different, creating an avalanche effect:
 
-To increase entropy, a custom PRNG is utilized. With its state stored in `ratic_context`, this PRNG is constantly seeded by the carryover (initialized to the input byte). If one different byte is used for the seed, then the output would be different, creating an avalanche effect:
-
-```
+```txt
 PRNG = ~(PRNG ^ hash_len) - carryover
 ```
 
-The state is XORed with the output of the RNG, and the carryover is set to the previous state (the last column), which is then set to the output of the RNG.
+The state is XORed with the output of the RNG, and the carryover is set to the previous state (the last column), which
+is then set to the output of the RNG.
 
-The preceding process is then iterated for each row of the state, repeated by the difficulty factor, for each byte of the state, as the central process described is 'cheap'.
+The preceding process is then iterated for each row of the state, repeated by the difficulty factor, for each byte of
+the state, as the central process described is 'cheap'.
 
-# Finalizing
+## Finalizing
 
-Length padding is used to prevent length extension attacks. As such, the padding must be different, if the input length is different. As such, the pad length should be at least as long as the length of the output digest.
+Length padding is used to prevent length extension attacks. As such, the padding must be different, if the input length
+is different. As such, the pad length should be at least as long as the length of the output digest.
 
-The padding consists of the counter (initialized to length of the message modulo 256), then its NOT value. The counter is then subtracted by the digest length (underflowing intentional), and the process is iterated.
+The padding consists of the counter (initialized to length of the message modulo 256), then its NOT value. The counter
+is then subtracted by the digest length (underflowing intentional), and the process is iterated.
 
 The state is then updated with the padding, which then becomes the output.
